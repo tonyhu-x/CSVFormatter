@@ -3,6 +3,8 @@
 import argparse
 import sys
 
+from console.utils import wait_key
+
 MAX_LINE_COUNT = 1024
 MAX_LINE_WIDTH = 512
 DEFAULT_DISPLAY_LINE_COUNT = 10
@@ -41,7 +43,7 @@ def read(file_name: str) -> list:
     return lst
 
 
-def print_formatted(contents: list):
+def print_formatted(contents: list, line_count: int):
     """Print the contents."""
     lengths = [-1] * len(contents[0])
 
@@ -49,22 +51,29 @@ def print_formatted(contents: list):
         for j in contents:
             lengths[i] = max(len(j[i]), lengths[i])
 
+    count = 0
     for ln in contents:
+        if count == line_count:
+            count = 0
+            print('>', end='')
+            wait_key()
+            print()
         for i, tok in enumerate(ln):
             print(tok + ' ' * (lengths[i] - len(tok)), end='')
             if i != len(ln) - 1:
                 print(',', end='')
         print()
+        count += 1
 
 
 def main(args: argparse.Namespace):
     """This is the main function."""
     contents = read(args.file_name)
-    print_formatted(contents)
+    print_formatted(contents, args.lines)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A command line CSV viewer and formatter.')
-    parser.add_argument('-l', action='store_true', help='specify the number of lines to display on each screen')
+    parser.add_argument('-l', '--lines', type=int, default=DEFAULT_DISPLAY_LINE_COUNT, help='specify the number of lines to display on each screen')
     parser.add_argument('file_name')
     args = parser.parse_args()
     main(args)  # remove the name argument
