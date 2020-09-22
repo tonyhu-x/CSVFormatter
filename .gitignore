@@ -1,5 +1,4 @@
 # test files
 *.csv
 
-.venv/
-.vscode/
+/.venv

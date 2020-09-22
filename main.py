@@ -10,6 +10,12 @@ MAX_LINE_WIDTH = 512
 DEFAULT_DISPLAY_LINE_COUNT = 10
 
 
+def print_nav_help():
+    print('q       quit\n'
+          '?       print navigation help\n'
+          'enter   next region\n'
+          'j       next line')
+
 def read(file_name: str) -> list:
     """Read the contents of the file."""
     lst = list()
@@ -56,8 +62,16 @@ def print_formatted(contents: list, line_count: int):
         if count == line_count:
             count = 0
             print('>', end='')
-            wait_key()
+            key = wait_key(('q', '\r', '?', 'j'))
             print()
+            if key == '?':
+                print_nav_help()
+                count = line_count
+                continue
+            elif key == 'q':
+                break
+            elif key == 'j':
+                count = line_count - 1
         for i, tok in enumerate(ln):
             print(tok + ' ' * (lengths[i] - len(tok)), end='')
             if i != len(ln) - 1:
@@ -70,6 +84,7 @@ def main(args: argparse.Namespace):
     """This is the main function."""
     contents = read(args.file_name)
     print_formatted(contents, args.lines)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A command line CSV viewer and formatter.')
