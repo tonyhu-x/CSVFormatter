@@ -1,4 +1,6 @@
 # test files
 *.csv
 
-/.venv
+.idea
+.vscode
+.venv
